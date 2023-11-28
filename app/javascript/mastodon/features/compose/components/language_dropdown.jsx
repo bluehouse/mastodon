@@ -5,14 +5,14 @@ import { injectIntl, defineMessages } from 'react-intl';
 
 import classNames from 'classnames';
 
+import { ReactComponent as TranslateIcon } from '@material-symbols/svg-600/outlined/translate.svg';
 import { supportsPassiveEvents } from 'detect-passive-events';
 import fuzzysort from 'fuzzysort';
 import Overlay from 'react-overlays/Overlay';
 
+import { Icon } from 'mastodon/components/icon';
 import { languages as preloadedLanguages } from 'mastodon/initial_state';
 import { loupeIcon, deleteIcon } from 'mastodon/utils/icons';
-
-import TextIconButton from './text_icon_button';
 
 const messages = defineMessages({
   changeLanguage: { id: 'compose.language.change', defaultMessage: 'Change language' },
@@ -297,20 +297,24 @@ class LanguageDropdown extends PureComponent {
   render () {
     const { value, intl, frequentlyUsedLanguages } = this.props;
     const { open, placement } = this.state;
+    const current = preloadedLanguages.find(lang => lang[0] === value);
 
     return (
-      <div className={classNames('privacy-dropdown', placement, { active: open })}>
-        <div className='privacy-dropdown__value' ref={this.setTargetRef} >
-          <TextIconButton
-            className='privacy-dropdown__value-icon'
-            label={value && value.toUpperCase()}
-            title={intl.formatMessage(messages.changeLanguage)}
-            active={open}
-            onClick={this.handleToggle}
-          />
-        </div>
+      <div ref={this.setTargetRef} onKeyDown={this.handleKeyDown}>
+        <button
+          type='button'
+          title={intl.formatMessage(messages.changeLanguage)}
+          aria-expanded={open}
+          onClick={this.handleToggle}
+          onMouseDown={this.handleMouseDown}
+          onKeyDown={this.handleButtonKeyDown}
+          className={classNames('dropdown-button', { active: open })}
+        >
+          <Icon icon={TranslateIcon} />
+          {current[2]}
+        </button>
 
-        <Overlay show={open} placement={'bottom'} flip target={this.findTarget} popperConfig={{ strategy: 'fixed', onFirstUpdate: this.handleOverlayEnter }}>
+        <Overlay show={open} offset={[5, 5]} placement={placement} flip target={this.findTarget} popperConfig={{ strategy: 'fixed', onFirstUpdate: this.handleOverlayEnter }}>
           {({ props, placement }) => (
             <div {...props}>
               <div className={`dropdown-animation language-dropdown__dropdown ${placement}`} >

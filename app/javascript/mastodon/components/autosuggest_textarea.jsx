@@ -52,7 +52,6 @@ const AutosuggestTextarea = forwardRef(({
   onFocus,
   autoFocus = true,
   lang,
-  children,
 }, textareaRef) => {
 
   const [suggestionsHidden, setSuggestionsHidden] = useState(true);
@@ -183,40 +182,35 @@ const AutosuggestTextarea = forwardRef(({
     );
   };
 
-  return [
-    <div className='compose-form__autosuggest-wrapper' key='autosuggest-wrapper'>
-      <div className='autosuggest-textarea'>
-        <label>
-          <span style={{ display: 'none' }}>{placeholder}</span>
+  return (
+    <div className='autosuggest-textarea'>
+      <label>
+        <span style={{ display: 'none' }}>{placeholder}</span>
 
-          <Textarea
-            ref={textareaRef}
-            className='autosuggest-textarea__textarea'
-            disabled={disabled}
-            placeholder={placeholder}
-            autoFocus={autoFocus}
-            value={value}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            onKeyUp={onKeyUp}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onPaste={handlePaste}
-            dir='auto'
-            aria-autocomplete='list'
-            lang={lang}
-          />
-        </label>
-      </div>
-      {children}
-    </div>,
+        <Textarea
+          ref={textareaRef}
+          className='autosuggest-textarea__textarea'
+          disabled={disabled}
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+          value={value}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onKeyUp={onKeyUp}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onPaste={handlePaste}
+          dir='auto'
+          aria-autocomplete='list'
+          lang={lang}
+        />
+      </label>
 
-    <div className='autosuggest-textarea__suggestions-wrapper' key='suggestions-wrapper'>
       <div className={`autosuggest-textarea__suggestions ${suggestionsHidden || suggestions.isEmpty() ? '' : 'autosuggest-textarea__suggestions--visible'}`}>
         {suggestions.map(renderSuggestion)}
       </div>
-    </div>,
-  ];
+    </div>
+  );
 });
 
 AutosuggestTextarea.propTypes = {
@@ -232,7 +226,6 @@ AutosuggestTextarea.propTypes = {
   onKeyDown: PropTypes.func,
   onPaste: PropTypes.func.isRequired,
   onFocus:PropTypes.func,
-  children: PropTypes.node,
   autoFocus: PropTypes.bool,
   lang: PropTypes.string,
 };

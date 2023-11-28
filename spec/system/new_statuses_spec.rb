@@ -24,7 +24,7 @@ describe 'NewStatuses' do
 
     within('.compose-form') do
       fill_in "What's on your mind?", with: status_text
-      click_button 'Publish!'
+      click_button 'Post'
     end
 
     expect(subject).to have_css('.status__content__text', text: status_text)
@@ -37,7 +37,7 @@ describe 'NewStatuses' do
 
     within('.compose-form') do
       fill_in "What's on your mind?", with: status_text
-      click_button 'Publish!'
+      click_button 'Post'
     end
 
     expect(subject).to have_css('.status__content__text', text: status_text)

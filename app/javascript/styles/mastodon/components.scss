@@ -371,41 +371,29 @@ body > [data-popper-placement] {
 .compose-form {
   padding: 15px;
 
-  &__sensitive-button {
-    padding: 10px;
-    padding-top: 0;
-    font-size: 14px;
-    font-weight: 500;
+  &__highlightable {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 0 1 auto;
+    border-radius: 4px;
+    transition: box-shadow 300ms linear;
+    min-height: 0;
+    position: relative;
+    background: $simple-background-color;
 
     &.active {
-      color: $highlight-text-color;
-    }
-
-    input[type='checkbox'] {
-      appearance: none;
-      display: inline-block;
-      position: relative;
-      border: 1px solid $ui-primary-color;
-      box-sizing: border-box;
-      width: 18px;
-      height: 18px;
-      flex: 0 0 auto;
-      margin-inline-end: 10px;
-      top: -1px;
-      border-radius: 4px;
-      vertical-align: middle;
-      cursor: inherit;
-
-      &:checked {
-        border-color: $highlight-text-color;
-        background: $highlight-text-color
-          url("data:image/svg+xml;utf8,<svg width='18' height='18' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M4.5 8.5L8 12l6-6' stroke='white' stroke-width='1.5'/></svg>")
-          center center no-repeat;
-      }
+      transition: none;
+      box-shadow: 0 0 0 6px rgba(lighten($highlight-text-color, 8%), 0.7);
     }
   }
 
-  .compose-form__warning {
+  &__scrollable {
+    flex: 0 1 auto;
+    overflow-y: auto;
+  }
+
+  &__warning {
     color: $inverted-text-color;
     margin-bottom: 10px;
     background: $ui-primary-color;
@@ -439,32 +427,36 @@ body > [data-popper-placement] {
     }
   }
 
-  .emoji-picker-dropdown {
-    position: absolute;
-    top: 0;
-    inset-inline-end: 0;
-  }
-
-  .compose-form__autosuggest-wrapper {
+  &__autosuggest-wrapper {
     position: relative;
   }
 
   .autosuggest-textarea,
-  .autosuggest-input,
-  .spoiler-input {
+  .autosuggest-input {
     position: relative;
-    width: 100%;
   }
 
   .spoiler-input {
-    height: 0;
-    transform-origin: bottom;
-    opacity: 0;
+    display: flex;
+    align-items: stretch;
 
-    &.spoiler-input--visible {
-      height: 36px;
-      margin-bottom: 11px;
-      opacity: 1;
+    &__border {
+      background: url('../images/warning-stripes.svg') repeat-y;
+      width: 5px;
+      flex: 0 0 auto;
+
+      &:first-child {
+        border-start-start-radius: 4px;
+      }
+
+      &:last-child {
+        border-start-end-radius: 4px;
+      }
+    }
+
+    .autosuggest-input {
+      flex: 1 1 auto;
+      background: rgba(133, 138, 250, 25%);
     }
   }
 
@@ -475,36 +467,32 @@ body > [data-popper-placement] {
     width: 100%;
     margin: 0;
     color: $inverted-text-color;
-    background: $simple-background-color;
-    padding: 10px;
+    background: transparent;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px;
+    padding: 12px;
+    line-height: 24px;
     resize: vertical;
     border: 0;
     outline: 0;
 
     &::placeholder {
-      color: $dark-text-color;
+      color: #79747e;
     }
 
     &:focus {
       outline: 0;
     }
-
-    @media screen and (width <= 600px) {
-      font-size: 16px;
-    }
   }
 
   .spoiler-input__input {
-    border-radius: 4px;
+    padding: 12px 12px - 5px;
   }
 
   .autosuggest-textarea__textarea {
+    background: transparent;
     min-height: 100px;
-    border-radius: 4px 4px 0 0;
     padding-bottom: 0;
-    padding-right: 10px + 22px; // Cannot use inline-end because of dir=auto
     resize: none;
     scrollbar-color: initial;
 
@@ -516,11 +504,6 @@ body > [data-popper-placement] {
       height: 100px !important; // Prevent auto-resize textarea
       resize: vertical;
     }
-  }
-
-  .autosuggest-textarea__suggestions-wrapper {
-    position: relative;
-    height: 0;
   }
 
   .autosuggest-textarea__suggestions {
@@ -601,142 +584,246 @@ body > [data-popper-placement] {
     color: $lighter-text-color;
   }
 
-  .compose-form__modifiers {
-    color: $inverted-text-color;
-    font-family: inherit;
-    font-size: 14px;
-    background: $simple-background-color;
+  &__dropdowns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-    .compose-form__upload-wrapper {
-      overflow: hidden;
-    }
+  &__uploads {
+    display: flex;
+    gap: 8px;
+    padding: 0 12px;
+    flex-wrap: wrap;
+    align-self: stretch;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-content: center;
+  }
 
-    .compose-form__uploads-wrapper {
+  &__upload {
+    flex: 1 1 0;
+    min-width: calc(50% - 8px);
+
+    &__actions {
       display: flex;
-      flex-direction: row;
-      padding: 5px;
-      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 8px;
     }
 
-    .compose-form__upload {
-      flex: 1 1 0;
-      min-width: 40%;
-      margin: 5px;
-
-      &__actions {
-        background: linear-gradient(
-          180deg,
-          rgba($base-shadow-color, 0.8) 0,
-          rgba($base-shadow-color, 0.35) 80%,
-          transparent
-        );
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-      }
-
-      .icon-button {
-        flex: 0 1 auto;
-        color: $secondary-text-color;
-        font-size: 14px;
-        font-weight: 500;
-        padding: 10px;
-        font-family: inherit;
-
-        .icon {
-          width: 15px;
-          height: 15px;
-        }
-
-        &:hover,
-        &:focus,
-        &:active {
-          color: lighten($secondary-text-color, 7%);
-        }
-      }
-
-      &__warning {
-        position: absolute;
-        z-index: 2;
-        bottom: 0;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        box-sizing: border-box;
-        background: linear-gradient(
-          0deg,
-          rgba($base-shadow-color, 0.8) 0,
-          rgba($base-shadow-color, 0.35) 80%,
-          transparent
-        );
-      }
+    &__preview {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      z-index: -1;
+      top: 0;
+      inset-inline-start: 0;
     }
 
-    .compose-form__upload-thumbnail {
-      border-radius: 4px;
-      background-color: $base-shadow-color;
+    &__thumbnail {
+      width: 100%;
+      height: 144px;
+      border-radius: 6px;
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
-      height: 140px;
-      width: 100%;
       overflow: hidden;
+    }
+
+    .icon-button {
+      flex: 0 0 auto;
+      color: $primary-text-color;
+      background: rgba($black, 0.75);
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 500;
+      padding: 4px 8px;
+      font-family: inherit;
+
+      .icon {
+        width: 15px;
+        height: 15px;
+      }
+    }
+
+    .icon-button.compose-form__upload__delete {
+      padding: 3px;
+      border-radius: 50%;
+
+      .icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    &__warning {
+      position: absolute;
+      z-index: 2;
+      bottom: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      padding: 8px;
+
+      .icon-button.active {
+        color: #ffbe2e;
+        background: rgba($black, 0.75);
+      }
     }
   }
 
-  .compose-form__buttons-wrapper {
-    padding: 10px;
-    background: darken($simple-background-color, 8%);
-    border-radius: 0 0 4px 4px;
+  &__footer {
     display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    padding-top: 0;
+  }
+
+  &__submit {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    & > div {
+      display: flex;
+    }
+
+    .icon-button {
+      padding: 3px;
+    }
+
+    .icon-button .icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     flex: 0 0 auto;
 
-    .compose-form__buttons {
-      display: flex;
-      gap: 2px;
-
-      .icon-button {
-        height: 100%;
-      }
-
-      .compose-form__upload-button-icon {
-        line-height: 27px;
-      }
-
-      .compose-form__sensitive-button {
-        display: none;
-
-        &.compose-form__sensitive-button--visible {
-          display: block;
-        }
-
-        .compose-form__sensitive-button__icon {
-          line-height: 27px;
-        }
-      }
+    .button {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      flex: 0 0 auto;
+      padding: 4px 16px;
+      border-radius: 5px;
     }
 
-    .icon-button,
-    .text-icon-button {
+    .icon-button {
       box-sizing: content-box;
-      padding: 0 3px;
-    }
+      color: $ui-highlight-color;
 
-    .character-counter__wrapper {
-      align-self: center;
-      margin-inline-end: 4px;
+      &.disabled {
+        color: $ui-highlight-color;
+        opacity: 0.38;
+      }
+
+      &.active {
+        background: $ui-highlight-color;
+        color: $simple-background-color;
+      }
     }
   }
 
-  .compose-form__publish {
+  &__poll {
     display: flex;
-    justify-content: flex-end;
-    min-width: 0;
-    flex: 0 0 auto;
+    flex-direction: column;
+    align-self: stretch;
+    gap: 8px;
 
-    .compose-form__publish-button-wrapper {
-      padding-top: 15px;
+    .poll__option {
+      padding: 0 12px;
+      gap: 8px;
+
+      input[type='text'] {
+        border-color: $ui-primary-color;
+      }
     }
+
+    .poll__input {
+      width: 17px;
+      height: 17px;
+      border-color: $ui-primary-color;
+    }
+
+    &__footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-inline-start: 37px;
+      padding-inline-end: 40px;
+
+      &__sep {
+        width: 1px;
+        height: 22px;
+        background: #cac4d0;
+        flex: 0 0 auto;
+      }
+    }
+
+    &__select {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+
+      &__label {
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 16px;
+        letter-spacing: 0.5px;
+        color: #625b71;
+      }
+
+      &__value {
+        appearance: none;
+        background: transparent;
+        border: none;
+        padding: 0;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: 0.1px;
+        color: $ui-highlight-color;
+      }
+    }
+  }
+}
+
+.dropdown-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  color: $ui-highlight-color;
+  border-radius: 6px;
+  border: 1px solid $ui-highlight-color;
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+
+  .icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  &.active {
+    background: $ui-highlight-color;
+    color: $primary-text-color;
   }
 }
 
@@ -744,7 +831,7 @@ body > [data-popper-placement] {
   cursor: default;
   font-family: $font-sans-serif, sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: $lighter-text-color;
 
   &.character-counter--over {
@@ -1942,30 +2029,16 @@ a.account__display-name {
   flex-shrink: 0;
   cursor: default;
   gap: 10px;
-  color: $darker-text-color;
 
-  strong {
-    color: $secondary-text-color;
+  .account {
+    border-bottom: 0;
+    padding: 0;
+    flex: 1 1 auto;
   }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .navigation-bar__actions {
-    position: relative;
-
-    .compose__action-bar .icon-button {
-      pointer-events: auto;
-      transform: scale(1, 1) translate(0, 0);
-      opacity: 1;
-
-      .icon {
-        width: 24px;
-        height: 24px;
-      }
-    }
+  .icon-button .icon {
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -2845,21 +2918,6 @@ $ui-header-height: 55px;
   }
 }
 
-.compose-form__highlightable {
-  display: flex;
-  flex-direction: column;
-  flex: 0 1 auto;
-  border-radius: 4px;
-  transition: box-shadow 300ms linear;
-  min-height: 0;
-  position: relative;
-
-  &.active {
-    transition: none;
-    box-shadow: 0 0 0 6px rgba(lighten($highlight-text-color, 8%), 0.7);
-  }
-}
-
 .compose-panel {
   width: 285px;
   margin-top: 10px;
@@ -2910,10 +2968,6 @@ $ui-header-height: 55px;
 
   .autosuggest-textarea__textarea {
     overflow-y: hidden;
-  }
-
-  .compose-form__upload-thumbnail {
-    height: 80px;
   }
 }
 
@@ -4651,15 +4705,17 @@ a.status-card {
 }
 
 .upload-progress {
-  padding: 10px;
   color: $lighter-text-color;
   overflow: hidden;
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  align-items: center;
+  padding: 0 12px;
 
   .icon {
     width: 24px;
     height: 24px;
+    color: $ui-highlight-color;
   }
 
   span {
@@ -4678,7 +4734,7 @@ a.status-card {
   width: 100%;
   height: 6px;
   border-radius: 6px;
-  background: darken($simple-background-color, 8%);
+  background: rgba($ui-highlight-color, 0.37);
   position: relative;
   margin-top: 5px;
 }

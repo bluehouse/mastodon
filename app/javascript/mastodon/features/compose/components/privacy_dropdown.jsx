@@ -5,7 +5,6 @@ import { injectIntl, defineMessages } from 'react-intl';
 
 import classNames from 'classnames';
 
-
 import { ReactComponent as AlternateEmailIcon } from '@material-symbols/svg-600/outlined/alternate_email.svg';
 import { ReactComponent as LockIcon } from '@material-symbols/svg-600/outlined/lock.svg';
 import { ReactComponent as LockOpenIcon } from '@material-symbols/svg-600/outlined/lock_open.svg';
@@ -13,10 +12,7 @@ import { ReactComponent as PublicIcon } from '@material-symbols/svg-600/outlined
 import { supportsPassiveEvents } from 'detect-passive-events';
 import Overlay from 'react-overlays/Overlay';
 
-
 import { Icon }  from 'mastodon/components/icon';
-
-import { IconButton } from '../../../components/icon_button';
 
 const messages = defineMessages({
   public_short: { id: 'privacy.public.short', defaultMessage: 'Public' },
@@ -260,23 +256,21 @@ class PrivacyDropdown extends PureComponent {
 
     return (
       <div ref={this.setTargetRef} onKeyDown={this.handleKeyDown}>
-        <IconButton
-          className='privacy-dropdown__value-icon'
-          icon={valueOption.icon}
-          iconComponent={valueOption.iconComponent}
+        <button
+          type='button'
           title={intl.formatMessage(messages.change_privacy)}
-          size={18}
-          expanded={open}
-          active={open}
-          inverted
+          aria-expanded={open}
           onClick={this.handleToggle}
           onMouseDown={this.handleMouseDown}
           onKeyDown={this.handleButtonKeyDown}
-          style={{ height: null, lineHeight: '27px' }}
           disabled={disabled}
-        />
+          className={classNames('dropdown-button', { active: open })}
+        >
+          <Icon icon={valueOption.iconComponent} />
+          {valueOption.text}
+        </button>
 
-        <Overlay show={open} placement={placement} flip target={this.findTarget} container={container} popperConfig={{ strategy: 'fixed', onFirstUpdate: this.handleOverlayEnter }}>
+        <Overlay show={open} offset={[5, 5]} placement={placement} flip target={this.findTarget} container={container} popperConfig={{ strategy: 'fixed', onFirstUpdate: this.handleOverlayEnter }}>
           {({ props, placement }) => (
             <div {...props}>
               <div className={`dropdown-animation privacy-dropdown__dropdown ${placement}`}>

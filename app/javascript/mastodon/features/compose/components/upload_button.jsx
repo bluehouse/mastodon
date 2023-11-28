@@ -6,7 +6,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 import { connect } from 'react-redux';
 
-import { ReactComponent as AddPhotoAlternateIcon } from '@material-symbols/svg-600/outlined/add_photo_alternate.svg';
+import { ReactComponent as PhotoLibraryIcon } from '@material-symbols/svg-600/outlined/photo_library.svg';
 
 import { IconButton } from '../../../components/icon_button';
 
@@ -31,7 +31,6 @@ class UploadButton extends ImmutablePureComponent {
 
   static propTypes = {
     disabled: PropTypes.bool,
-    unavailable: PropTypes.bool,
     onSelectFile: PropTypes.func.isRequired,
     style: PropTypes.object,
     resetFileKey: PropTypes.number,
@@ -54,17 +53,13 @@ class UploadButton extends ImmutablePureComponent {
   };
 
   render () {
-    const { intl, resetFileKey, unavailable, disabled, acceptContentTypes } = this.props;
-
-    if (unavailable) {
-      return null;
-    }
+    const { intl, resetFileKey, disabled, acceptContentTypes } = this.props;
 
     const message = intl.formatMessage(messages.upload);
 
     return (
       <div className='compose-form__upload-button'>
-        <IconButton icon='paperclip' iconComponent={AddPhotoAlternateIcon} title={message} disabled={disabled} onClick={this.handleClick} className='compose-form__upload-button-icon' size={18} inverted style={iconStyle} />
+        <IconButton icon='paperclip' iconComponent={PhotoLibraryIcon} title={message} disabled={disabled} onClick={this.handleClick} className='compose-form__upload-button-icon' size={18} inverted style={iconStyle} />
         <label>
           <span style={{ display: 'none' }}>{message}</span>
           <input
