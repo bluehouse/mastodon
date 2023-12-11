@@ -74,6 +74,12 @@ class FanOutOnWriteService < BaseService
       LocalNotificationWorker.push_bulk(mentions) do |mention|
         [mention.account_id, mention.id, 'Mention', 'mention']
       end
+
+      next unless update?
+
+      PushUpdateWorker.push_bulk(mentions.filter { |mention| subscribed_to_streaming_api?(mention.account_id) }) do |mention|
+        [mention.account_id, @status.id, "timeline:#{mention.account_id}:notifications", { 'update' => true }]
+      end
     end
   end
 
@@ -161,5 +167,9 @@ class FanOutOnWriteService < BaseService
 
   def broadcastable?
     @status.public_visibility? && !@status.reblog? && !@account.silenced?
+  end
+
+  def subscribed_to_streaming_api?(account_id)
+    redis.exists?("subscribed:timeline:#{account_id}") || redis.exists?("subscribed:timeline:#{account_id}:notifications")
   end
 end
