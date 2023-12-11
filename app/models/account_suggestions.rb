@@ -1,28 +1,43 @@
 # frozen_string_literal: true
 
 class AccountSuggestions
+  include DatabaseHelper
+
   SOURCES = [
     AccountSuggestions::SettingSource,
-    AccountSuggestions::PastInteractionsSource,
+    AccountSuggestions::FriendsOfFriendsSource,
     AccountSuggestions::GlobalSource,
   ].freeze
 
-  def self.get(account, limit)
-    SOURCES.each_with_object([]) do |source_class, suggestions|
-      source_suggestions = source_class.new.get(
-        account,
-        skip_account_ids: suggestions.map(&:account_id),
-        limit: limit - suggestions.size
-      )
+  TARGET_SET_SIZE = 100
 
-      suggestions.concat(source_suggestions)
+  def initialize(account)
+    @account = account
+  end
+
+  def get(limit, offset = 0)
+    with_read_replica do
+      account_ids = Rails.cache.fetch("follow_recommendations/#{@account.id}", expires_in: 15.minutes) do
+        arr = []
+
+        SOURCES.each do |klass|
+          break if arr.size >= TARGET_SET_SIZE
+
+          # FIXME: We're not keeping track of which algorithm the IDs come from
+          arr.concat(klass.new.get(@account, limit: TARGET_SET_SIZE - arr.size))
+        end
+
+        arr
+      end
+
+      # The sources deliver accounts that haven't yet been followed, are not blocked,
+      # and so on. Since we reset the cache on follows, blocks, and so on, we don't need
+      # a complicated query on this end.
+      Account.where(id: account_ids).limit(limit).offset(offset).sort_by { |account| account_ids.index(account.id) }.map { |account| AccountSuggestions::Suggestion.new(account: account, source: nil) }
     end
   end
 
-  def self.remove(account, target_account_id)
-    SOURCES.each do |source_class|
-      source = source_class.new
-      source.remove(account, target_account_id)
-    end
+  def remove(target_account_id)
+    FollowRecommendationMute.create(account_id: @account.id, target_account_id: target_account_id)
   end
 end
